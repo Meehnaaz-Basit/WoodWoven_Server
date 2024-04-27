@@ -32,6 +32,8 @@ async function run() {
     // await client.connect();
 
     const craftCollection = client.db("craftsDB").collection("crafts");
+    const categoryCollection = client.db("craftsDB").collection("categories");
+
     // data sent to database from client form
     app.post("/allCrafts", async (req, res) => {
       const newCraft = req.body;
@@ -42,6 +44,12 @@ async function run() {
     // from data base now we wll show the data to server
     app.get("/allCrafts", async (req, res) => {
       const cursor = craftCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+    // from database we will show the cat to server
+    app.get("/categories", async (req, res) => {
+      const cursor = categoryCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
