@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
 require("dotenv").config();
@@ -29,7 +29,30 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
+
+    const craftCollection = client.db("craftsDB").collection("crafts");
+    // data sent to database from client form
+    app.post("/allCrafts", async (req, res) => {
+      const newCraft = req.body;
+      console.log(newCraft);
+      const result = await craftCollection.insertOne(newCraft);
+      res.send(result);
+    });
+    // from data base now we wll show the data to server
+    app.get("/allCrafts", async (req, res) => {
+      const cursor = craftCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+    // fetch single data by id
+    app.get("/allCrafts/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await craftCollection.findOne(query);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
@@ -37,16 +60,16 @@ async function run() {
     );
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
 
 // mongo ends
 
-app.get("/allCrafts", (req, res) => {
-  res.send("all craft here");
-});
+// app.get("/allCrafts", (req, res) => {
+//   res.send("all craft here");
+// });
 
 app.listen(port, () => {
   console.log(`the server is running on port: ${port} `);
