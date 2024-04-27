@@ -47,12 +47,22 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
-    // from database we will show the cat to server
+    // from database we will show the category to server
     app.get("/categories", async (req, res) => {
       const cursor = categoryCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
+    // fetch single category
+    // Add a route to fetch crafts based on category
+    app.get("/allCrafts/:category", async (req, res) => {
+      const category = req.params.category;
+      const query = { category: category };
+      const cursor = craftCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     // fetch single data by id
     app.get("/allCrafts/:id", async (req, res) => {
       const id = req.params.id;
